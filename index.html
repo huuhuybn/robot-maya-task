@@ -304,29 +304,50 @@
             renderer.setSize(container.clientWidth, container.clientHeight);
         });
 
-        // Animation Loop
+        // Animation Loop - Walk Cycle
         const clock = new THREE.Clock();
+
+        // Tốc độ Walk Cycle
+        const walkSpeed = 2.5;    // tần số bước chân
+        const moveSpeed = 0.25;   // tốc độ di chuyển vòng tròn
+        const walkRadius = 5;     // bán kính vòng tròn đi bộ
 
         function animate() {
             requestAnimationFrame(animate);
             const time = clock.getElapsedTime();
-            
-            // Chuyển động cơ thể nhẹ nhàng (Hover Idle)
-            robot.position.y = 0.7 + Math.sin(time * 2) * 0.05;
-            
-            // Hơi nghiêng người thở
-            bodyGroup.rotation.x = Math.sin(time * 1.5) * 0.02;
-            
-            // Xoay đầu qua lại tìm kiếm
-            headGroup.rotation.y = Math.sin(time * 0.8) * 0.4;
-            headGroup.rotation.x = Math.cos(time * 1.2) * 0.05;
-            
-            // Tay đung đưa nhẹ
-            armLGroup.rotation.x = Math.sin(time * 2) * 0.05;
-            armRGroup.rotation.x = -Math.sin(time * 2) * 0.05;
+            const walkPhase = time * walkSpeed;
 
-            // Mạch năng lượng ở ngực đập sáng/tối
-            core.material.color.setHSL(0.55, 0.8, 0.5 + Math.sin(time * 5) * 0.2);
+            // ── Di chuyển robot theo vòng tròn ──────────────────────────
+            const angle = time * moveSpeed;
+            robot.position.x = Math.sin(angle) * walkRadius;
+            robot.position.z = Math.cos(angle) * walkRadius;
+            // Quay mặt robot theo hướng di chuyển
+            robot.rotation.y = -angle + Math.PI;
+
+            // ── Bob lên xuống theo nhịp bước (2 lần / chu kỳ tay-chân) ──
+            robot.position.y = 0.7 + Math.abs(Math.sin(walkPhase)) * 0.12;
+
+            // ── Thân lắc nhẹ sang trái/phải (lateral sway) ──────────────
+            bodyGroup.rotation.z = Math.sin(walkPhase) * 0.06;
+            // Thân hơi nghiêng về phía trước khi bước
+            bodyGroup.rotation.x = 0.08;
+
+            // ── Chân bước luân phiên ─────────────────────────────────────
+            const legSwing = 0.55; // biên độ xoay chân
+            legLGroup.rotation.x =  Math.sin(walkPhase) * legSwing;
+            legRGroup.rotation.x = -Math.sin(walkPhase) * legSwing;
+
+            // ── Tay đung đưa NGƯỢC chiều chân ────────────────────────────
+            const armSwing = 0.5;
+            armLGroup.rotation.x = -Math.sin(walkPhase) * armSwing;
+            armRGroup.rotation.x =  Math.sin(walkPhase) * armSwing;
+
+            // ── Đầu giữ ổn định (counter-rotate để nhìn thẳng) ───────────
+            headGroup.rotation.y = 0;
+            headGroup.rotation.x = -0.05;
+
+            // ── Mạch năng lượng ngực nhấp nháy ───────────────────────────
+            core.material.color.setHSL(0.55, 0.9, 0.45 + Math.abs(Math.sin(walkPhase * 2)) * 0.25);
 
             controls.update();
             renderer.render(scene, camera);
