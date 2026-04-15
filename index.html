@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhiệm vụ Maya: Thiết kế Robot</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --text: #e2e8f0;
+            --primary: #3b82f6;
+            --accent: #10b981;
+            --card: #1e293b;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #canvas-container {
+            flex: 1;
+            position: relative;
+        }
+        #instructions {
+            width: 450px;
+            background-color: var(--card);
+            padding: 40px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            overflow-y: auto;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-top: 0;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            font-size: 1.25rem;
+            color: var(--primary);
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+            background: rgba(255,255,255,0.03);
+            padding: 15px 15px 15px 40px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            transition: transform 0.2s;
+        }
+        li:hover {
+            transform: translateX(5px);
+            background: rgba(255,255,255,0.05);
+        }
+        li::before {
+            content: "✓";
+            position: absolute;
+            left: 15px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        p {
+            line-height: 1.6;
+            color: #94a3b8;
+        }
+        .badged {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--card);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div id="instructions">
+        <span class="badged">Bài Test 3D Cơ Bản</span>
+        <h1>Nhiệm vụ: Thiết kế Robot</h1>
+        <p>Bên trái là mẫu sơ phác (blockout) một robot 3D dạng hình khối cơ bản. Nhiệm vụ của bạn là sử dụng <strong>Autodesk Maya</strong> nhằm nâng cấp, chi tiết hóa thiết kế này theo yêu cầu dưới đây.</p>
+        
+        <h2>Các bước thực hiện trong Maya</h2>
+        <ul>
+            <li><strong>Model nhân vật tương tự:</strong> Dựa vào blockout này (có cấu trúc đầu, thân, tay, chân), hãy thiết kế thêm các chi tiết cơ khí (khớp nối, dây cáp, ốc vít, lớp giáp) sao cho nhân vật trông cứng cáp và hiện đại hơn.</li>
+            <li><strong>Trải UV (UV Mapping):</strong> Trải UV một cách gọn gàng, pack UV tiết kiệm diện tích tối đa và kiểm tra kỹ không để kéo dãn (distortion).</li>
+            <li><strong>Đổ Material (Vật liệu):</strong> Thiết lập các vật liệu cơ bản để phân tách chất liệu. Ví dụ: Kim loại rỉ sét cho thân, nhựa mờ cho tay chân và vật liệu phát sáng (Emission) cho mắt và lõi ngực.</li>
+            <li><strong>Tối ưu lưới (Topology):</strong> Đảm bảo đi lưới đa giác 4 cạnh (Quad). Xếp Edge Loop đều đặn tại các khớp tay và chân để đội Rigging/Animation làm việc dễ dàng về sau.</li>
+        </ul>
+        
+        <h2>Yêu cầu nộp bài</h2>
+        <p>Thực hiện Setup ánh sáng Studio Lighting bằng <strong>Arnold Renderer</strong> trong Maya. Render đồ án thành 2 ảnh góc nhìn 3/4 (một góc mặt trước, một góc mặt sau) với chất lượng tốt.</p>
+
+        <p style="margin-top: 40px; font-size: 0.85em; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; color: #64748b;">
+            Tương tác 3D: Chuột trái để xoay, Chuột phải để dịch chuyển, Con lăn để zoom.
+        </p>
+    </div>
+
+    <!-- Scripts from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/RoundedBoxGeometry.js"></script>
+    <script>
+        // Cài đặt cơ bản scene
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color('#0f172a');
+        scene.fog = new THREE.FogExp2('#0f172a', 0.03);
+
+        const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(7, 4, 13);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.target.set(0, 3, 0);
+
+        // Ánh sáng
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 10, 7);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 1024;
+        dirLight.shadow.mapSize.height = 1024;
+        scene.add(dirLight);
+
+        const fillLight = new THREE.PointLight(0x3b82f6, 1.2, 20); // Đèn phụ màu xanh dương
+        fillLight.position.set(-6, 5, -5);
+        scene.add(fillLight);
+
+        const rimLight = new THREE.PointLight(0x10b981, 1.5, 20); // Đèn viền màu xanh ngọc
+        rimLight.position.set(6, -2, -6);
+        scene.add(rimLight);
+
+        // Lưới sàn (Grid)
+        const gridHelper = new THREE.GridHelper(30, 30, 0x3b82f6, 0xffffff);
+        gridHelper.material.opacity = 0.05;
+        gridHelper.material.transparent = true;
+        scene.add(gridHelper);
+
+        // Robot Container
+        const robot = new THREE.Group();
+        scene.add(robot);
+
+        // Vật liệu (Materials)
+        const mainMaterial = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.3, metalness: 0.7 });
+        const darkMaterial = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 });
+        const accentMaterial = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.2, metalness: 0.8 });
+        const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0x38bdf8 }); // Màu sáng chói (cyan)
+        const eyeRedMaterial = new THREE.MeshBasicMaterial({ color: 0xf43f5e }); // Màu sáng đỏ
+
+        // Hàm tiện ích tạo geometry
+        function addMesh(geo, mat, parent, x, y, z) {
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(x, y, z);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            parent.add(mesh);
+            return mesh;
+        }
+
+        // --- THÂN CHÍNH (BODY) ---
+        const bodyGroup = new THREE.Group();
+        bodyGroup.position.set(0, 3.5, 0);
+        robot.add(bodyGroup);
+
+        const bodyGeo = new THREE.RoundedBoxGeometry(2.4, 3, 1.8, 4, 0.1);
+        addMesh(bodyGeo, mainMaterial, bodyGroup, 0, 0, 0);
+        
+        // Chi tiết ngực / lõi năng lượng
+        const chestGeo = new THREE.RoundedBoxGeometry(1.6, 1.2, 0.4, 4, 0.05);
+        addMesh(chestGeo, darkMaterial, bodyGroup, 0, 0.4, 0.8);
+        const coreGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.5, 32);
+        const core = addMesh(coreGeo, eyeMaterial, bodyGroup, 0, 0.4, 0.95);
+        core.rotation.x = Math.PI / 2;
+
+        // Cổ
+        const neckGeo = new THREE.CylinderGeometry(0.3, 0.4, 0.6);
+        addMesh(neckGeo, darkMaterial, bodyGroup, 0, 1.7, 0);
+
+        // --- ĐẦU (HEAD) ---
+        const headGroup = new THREE.Group();
+        headGroup.position.set(0, 2.7, 0); 
+        bodyGroup.add(headGroup);
+
+        const headGeo = new THREE.RoundedBoxGeometry(1.6, 1.4, 1.6, 4, 0.1);
+        addMesh(headGeo, mainMaterial, headGroup, 0, 0, 0);
+
+        // Mắt
+        const eyeGeo = new THREE.RoundedBoxGeometry(0.5, 0.3, 0.1, 2, 0.02);
+        addMesh(eyeGeo, eyeMaterial, headGroup, -0.4, 0.1, 0.82);
+        addMesh(eyeGeo, eyeMaterial, headGroup, 0.4, 0.1, 0.82);
+
+        // Ăng ten
+        const antGen = new THREE.CylinderGeometry(0.04, 0.08, 0.8);
+        addMesh(antGen, darkMaterial, headGroup, -0.6, 1.1, 0);
+        const antBall = new THREE.SphereGeometry(0.12);
+        addMesh(antBall, eyeRedMaterial, headGroup, -0.6, 1.5, 0);
+
+        // Tai (Ears)
+        const earGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.3, 16);
+        const earL = addMesh(earGeo, accentMaterial, headGroup, -0.85, 0, 0);
+        earL.rotation.z = Math.PI / 2;
+        const earR = addMesh(earGeo, accentMaterial, headGroup, 0.85, 0, 0);
+        earR.rotation.z = Math.PI / 2;
+
+
+        // --- TAY (ARMS) ---
+        const shoulderGeo = new THREE.SphereGeometry(0.5);
+        const armGeo = new THREE.RoundedBoxGeometry(0.6, 1.8, 0.6, 4, 0.05);
+        const handGeo = new THREE.RoundedBoxGeometry(0.8, 0.6, 0.8, 4, 0.05);
+
+        // Tay trái
+        const armLGroup = new THREE.Group();
+        armLGroup.position.set(-1.6, 1.2, 0);
+        bodyGroup.add(armLGroup);
+        addMesh(shoulderGeo, accentMaterial, armLGroup, 0, 0, 0);
+        addMesh(armGeo, mainMaterial, armLGroup, -0.4, -1, 0);
+        addMesh(handGeo, darkMaterial, armLGroup, -0.4, -2.1, 0);
+
+        // Tay phải
+        const armRGroup = new THREE.Group();
+        armRGroup.position.set(1.6, 1.2, 0);
+        bodyGroup.add(armRGroup);
+        addMesh(shoulderGeo, accentMaterial, armRGroup, 0, 0, 0);
+        addMesh(armGeo, mainMaterial, armRGroup, 0.4, -1, 0);
+        addMesh(handGeo, darkMaterial, armRGroup, 0.4, -2.1, 0);
+
+
+        // --- CHÂN (LEGS) ---
+        const pelvisGeo = new THREE.RoundedBoxGeometry(1.8, 0.6, 1.2, 4, 0.05);
+        addMesh(pelvisGeo, darkMaterial, robot, 0, 1.7, 0); // Vùng chậu nằm dưới thân
+        
+        const jointGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.7);
+        const legGeo = new THREE.RoundedBoxGeometry(0.8, 1.8, 0.8, 4, 0.05);
+        const footGeo = new THREE.RoundedBoxGeometry(1.2, 0.4, 1.6, 4, 0.05);
+
+        // Chân trái
+        const legLGroup = new THREE.Group();
+        legLGroup.position.set(-0.6, 1.4, 0);
+        robot.add(legLGroup);
+        const jointL = addMesh(jointGeo, accentMaterial, legLGroup, 0, 0, 0);
+        jointL.rotation.z = Math.PI / 2;
+        addMesh(legGeo, mainMaterial, legLGroup, 0, -1.1, 0);
+        addMesh(footGeo, darkMaterial, legLGroup, 0, -2.1, 0.2);
+
+        // Chân phải
+        const legRGroup = new THREE.Group();
+        legRGroup.position.set(0.6, 1.4, 0);
+        robot.add(legRGroup);
+        const jointR = addMesh(jointGeo, accentMaterial, legRGroup, 0, 0, 0);
+        jointR.rotation.z = Math.PI / 2;
+        addMesh(legGeo, mainMaterial, legRGroup, 0, -1.1, 0);
+        addMesh(footGeo, darkMaterial, legRGroup, 0, -2.1, 0.2);
+
+        robot.position.y = 0.7; // Căn lại robot vừa chạm mặt đất
+
+        // Xử lý khi thu phóng / đổi kích thước màn hình
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+            
+            // Chuyển động cơ thể nhẹ nhàng (Hover Idle)
+            robot.position.y = 0.7 + Math.sin(time * 2) * 0.05;
+            
+            // Hơi nghiêng người thở
+            bodyGroup.rotation.x = Math.sin(time * 1.5) * 0.02;
+            
+            // Xoay đầu qua lại tìm kiếm
+            headGroup.rotation.y = Math.sin(time * 0.8) * 0.4;
+            headGroup.rotation.x = Math.cos(time * 1.2) * 0.05;
+            
+            // Tay đung đưa nhẹ
+            armLGroup.rotation.x = Math.sin(time * 2) * 0.05;
+            armRGroup.rotation.x = -Math.sin(time * 2) * 0.05;
+
+            // Mạch năng lượng ở ngực đập sáng/tối
+            core.material.color.setHSL(0.55, 0.8, 0.5 + Math.sin(time * 5) * 0.2);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Khởi động vòng lặp
+        animate();
+
+    </script>
+</body>
+</html>
